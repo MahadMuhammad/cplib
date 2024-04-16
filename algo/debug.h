@@ -25,7 +25,14 @@ void dbg_out(Head H, Tail... T) {
 }
 
 #ifdef MAHAD_DEBUG
-#define dbg(...) cout << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
+#define welcome(...)                                                         \
+  cout << (__unix__ ? "[MAHAD - UNIX] " : "") << __DATE__ << " " << __TIME__ \
+       << " " << __FILE__ << " GCC Version: " << __VERSION__ << "\n";
+#define dbg(...)                                            \
+  cout << "[fn: " << __FUNCTION__ << " ,line: " << __LINE__ \
+       << " ,var: " << #__VA_ARGS__ << "]:",                \
+      dbg_out(__VA_ARGS__)
 #else
+#define welcome(...) ((void)0)
 #define dbg(...) ((void)0)
 #endif
