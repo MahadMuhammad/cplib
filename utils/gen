@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+# Author: <Muhammad Mahad mahadtxt@gmail.com>
+
+import argparse, os
+from datetime import datetime
+
+
+def read_template(file_path):
+    with open(file_path, "r") as file:
+        return file.read()
+
+
+def generate_header(author, file_name):
+    timestamp = datetime.now().strftime("%b-%d-%Y   %H:%M:%S")
+    current_path = os.getcwd()
+    cp_index = current_path.rfind("CP")
+    if cp_index != -1:
+        relative_path = current_path[cp_index:] + "/" + file_name
+    else:
+        relative_path = current_path
+
+    header = f"""\
+/**
+ *    Author  : {author}
+ *    Created : {timestamp}   {relative_path}
+ **/"""
+    return header
+
+
+def write_output(header, template_content, output_path):
+    with open(output_path, "w") as file:
+        file.write(header + "\n" + template_content)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Append dynamic header to a template file."
+    )
+    parser.add_argument(
+        "input_file",
+        nargs="?",
+        default=os.path.expanduser("~/cplib/libs/cp_template.cpp"),
+        help="Path to the input template file",
+    )
+    parser.add_argument(
+        "-o",
+        "--output_file",
+        nargs="?",
+        default="A.cpp",
+        help="Path to the output file",
+    )
+    parser.add_argument(
+        "--author", default="Mahad", help="Author name to include in the header"
+    )
+
+    args = parser.parse_args()
+
+    template_content = read_template(args.input_file)
+
+    if not args.output_file.endswith(".cpp"):
+        args.output_file += ".cpp"
+    header = generate_header(args.author, args.output_file)
+    write_output(header, template_content, args.output_file)
+
+
+if __name__ == "__main__":
+    main()
