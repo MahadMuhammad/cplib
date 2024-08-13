@@ -11,7 +11,7 @@ def read_template(file_path):
 
 
 def generate_header(author, file_name):
-    timestamp = datetime.now().strftime("%b-%d-%Y   %H:%M:%S")
+    timestamp = datetime.now().strftime("%b-%d-%Y   %I:%M:%S %p")
     current_path = os.getcwd()
     cp_index = current_path.rfind("CP")
     if cp_index != -1:
