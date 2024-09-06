@@ -21,7 +21,7 @@ def generate_header(author, file_name):
 
     header = f"""\
 /**
- *    Author  : {author}
+ *    Author  : {author} | github.com/MahadMuhammad
  *    Created : {timestamp}   {relative_path}
  **/"""
     return header
