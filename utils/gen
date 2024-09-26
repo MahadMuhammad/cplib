@@ -55,6 +55,8 @@ def main():
 
     args = parser.parse_args()
 
+    # replace spaces with underscores in output file name
+    args.output_file = args.output_file.replace(" ", "_")
     template_content = read_template(args.input_file)
 
     if not args.output_file.endswith(".cpp"):
