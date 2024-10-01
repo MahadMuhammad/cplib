@@ -35,12 +35,9 @@ Created : {timestamp}   {relative_path}
     return header
 
 
-def write_output(header, template_content, output_path, is_python=False):
+def write_output(header, template_content, output_path):
     with open(output_path, "w") as file:
-        if not is_python:
-            file.write(header + "\n" + template_content)
-        else:
-            file.write(header + "\n")
+        file.write(header + "\n" + template_content)
 
 
 def main():
@@ -74,17 +71,18 @@ def main():
 
     # replace spaces with underscores in output file name
     args.output_file = args.output_file.replace(" ", "_")
-    template_content = read_template(args.input_file)
 
     if args.python:
         if not args.output_file.endswith(".py"):
             args.output_file += ".py"
+        args.input_file = os.path.expanduser("~/cplib/libs/cp_template.py")
     else:
         if not args.output_file.endswith(".cpp"):
             args.output_file += ".cpp"
 
+    template_content = read_template(args.input_file)
     header = generate_header(args.author, args.output_file, is_python=args.python)
-    write_output(header, template_content, args.output_file, is_python=args.python)
+    write_output(header, template_content, args.output_file)
 
 
 if __name__ == "__main__":
