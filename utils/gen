@@ -10,7 +10,7 @@ def read_template(file_path):
         return file.read()
 
 
-def generate_header(author, file_name):
+def generate_header(author, file_name, is_python=False):
     timestamp = datetime.now().strftime("%b-%d-%Y   %I:%M:%S %p")
     current_path = os.getcwd()
     cp_index = current_path.rfind("CP")
@@ -19,7 +19,15 @@ def generate_header(author, file_name):
     else:
         relative_path = current_path
 
-    header = f"""\
+    if is_python:
+        header = f"""\
+\"\"\"
+Author  : {author} | github.com/MahadMuhammad
+Created : {timestamp}   {relative_path}
+\"\"\"
+"""
+    else:
+        header = f"""\
 /**
  *    Author  : {author} | github.com/MahadMuhammad
  *    Created : {timestamp}   {relative_path}
@@ -27,9 +35,12 @@ def generate_header(author, file_name):
     return header
 
 
-def write_output(header, template_content, output_path):
+def write_output(header, template_content, output_path, is_python=False):
     with open(output_path, "w") as file:
-        file.write(header + "\n" + template_content)
+        if not is_python:
+            file.write(header + "\n" + template_content)
+        else:
+            file.write(header + "\n")
 
 
 def main():
@@ -52,6 +63,12 @@ def main():
     parser.add_argument(
         "--author", default="Mahad", help="Author name to include in the header"
     )
+    parser.add_argument(
+        "-p",
+        "--python",
+        action="store_true",
+        help="Generate a Python file with a Python header comment",
+    )
 
     args = parser.parse_args()
 
@@ -59,10 +76,15 @@ def main():
     args.output_file = args.output_file.replace(" ", "_")
     template_content = read_template(args.input_file)
 
-    if not args.output_file.endswith(".cpp"):
-        args.output_file += ".cpp"
-    header = generate_header(args.author, args.output_file)
-    write_output(header, template_content, args.output_file)
+    if args.python:
+        if not args.output_file.endswith(".py"):
+            args.output_file += ".py"
+    else:
+        if not args.output_file.endswith(".cpp"):
+            args.output_file += ".cpp"
+
+    header = generate_header(args.author, args.output_file, is_python=args.python)
+    write_output(header, template_content, args.output_file, is_python=args.python)
 
 
 if __name__ == "__main__":
