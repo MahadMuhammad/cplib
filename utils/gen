@@ -29,8 +29,9 @@ Created : {timestamp}   {relative_path}
     else:
         header = f"""\
 /**
- *    Author  : {author} | github.com/MahadMuhammad
- *    Created : {timestamp}   {relative_path}
+ *  Author  : {author} | github.com/MahadMuhammad
+ *  Created : {timestamp}   
+ *  {relative_path}
  **/"""
     return header
 
