@@ -24,7 +24,7 @@ else:
     )
 
 CXX = "g++"
-CXXFLAGS = "-std=c++23 -I/home/mahad/cplib/ -Wall -Wextra -pedantic -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -Wno-unused-result -Wno-sign-conversion -Wsign-conversion"
+CXXFLAGS = "-std=c++23 -Winvalid-pch -I/home/mahad/cplib/ -Wall -Wextra -pedantic -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -Wunused -Wsign-conversion"
 DEBUG_CXXFLAGS = "-fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize-recover=all -fstack-protector-all -D_FORTIFY_SOURCE=2 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -DMAHAD_DEBUG"
 
 if DEBUG:
