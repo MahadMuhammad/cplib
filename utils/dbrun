@@ -33,7 +33,20 @@ if DEBUG:
 
 def compile_cpp():
     source_file = f"{PROBLEM_NAME}.cpp"
-    command = f"{CXX} {CXXFLAGS} {source_file} -o {TARGET}.out"
+    target_file = f"{TARGET}.out"
+
+    # Skip compilation if the target is up-to-date
+    if os.path.exists(target_file) and os.path.getmtime(
+        source_file
+    ) <= os.path.getmtime(target_file):
+        print(f"\033[92m{target_file} is up-to-date.\033[0m")
+        return
+
+    # Compile the source file
+    msg = f"\033[91mCompiling {source_file} with c++23 "
+    msg += "with DEBUG flags...\033[0m" if DEBUG else "...\033[0m"
+    print(msg)
+    command = f"{CXX} {CXXFLAGS} {source_file} -o {target_file}"
     subprocess.run(command, shell=True, check=True)
 
 
@@ -87,6 +100,11 @@ def test():
         )
         res_file = f"{test_case}.result"
         out_file = f"{test_case}.output"
+
+        # if output file is empty, then inform the user
+        if os.stat(res_file).st_size == 0:
+            print(f"\033[91m{res_file} is empty -- Skipping\033[0m")
+            continue
         subprocess.run(f"diff --color='auto' {res_file} {out_file}", shell=True)
 
 
