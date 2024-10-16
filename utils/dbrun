@@ -58,6 +58,11 @@ def clean():
             os.remove(target)
 
 
+def clean_results():
+    for res_file in glob.glob("*.result"):
+        os.remove(res_file)
+
+
 def veryclean():
     clean()
     for res_file in glob.glob("*.result"):
@@ -91,8 +96,14 @@ def test():
 
     # compile the cpp file
     compile_cpp()
-    for test_case in tests:
-        print(f"Running test case {test_case}...\n")
+    clean_results()
+    passed = 0
+    failed = 0
+    failed_cases = []  # <test_case_number, test_case_name, error_message>
+
+    for i, test_case in enumerate(tests):
+        print(f"\033[94m{30*'-'}\033[0m")
+        print(f"Running test case {i} {test_case}...\n")
         subprocess.run(
             f"time -p {EXECUTE} < {test_case}.in > {test_case}.result",
             shell=True,
@@ -104,8 +115,48 @@ def test():
         # if output file is empty, then inform the user
         if os.stat(res_file).st_size == 0:
             print(f"\033[91m{res_file} is empty -- Skipping\033[0m")
+            failed += 1
+            failed_cases.append((i, test_case, f"{res_file} is empty"))
+            print(f"\033[94m{30*'-'}\033[0m")
             continue
-        subprocess.run(f"diff --color='auto' {res_file} {out_file}", shell=True)
+
+        result = subprocess.run(
+            f"diff --color=always {res_file} {out_file}",
+            shell=True,
+            text=True,
+            capture_output=True,
+        )
+        if result.stdout == "":
+            print(f"\033[92mTest case {i} {test_case} passed.\033[0m")
+            passed += 1
+        else:
+            print(f"\033[91mTest case {i} {test_case} failed.\033[0m")
+            failed_cases.append((i, test_case, result.stdout))
+            failed += 1
+        print(f"\033[94m{30*'-'}\033[0m")
+    total = len(tests)
+    try:
+        assert total == passed + failed == len(outs) == len(cases)
+    except AssertionError:
+        print(
+            f"\033[91mSanity check failed: total={total}, passed+failed={passed + failed}, len(outs)={len(outs)}, len(cases)={len(cases)}\033[0m"
+        )
+
+    print(f"\033[94m{40*'-'}\033[0m")
+    print(f"\n\033[94m\t\tTest Summary:\033[0m")
+    print(f"\tTotal: {total}, Passed: {passed}, Failed: {failed}")
+    if failed == 0:
+        print("\tVERDICT: PASSED")
+        print("\033[92m\tAll test cases passed!\033[0m")
+        print(f"\033[94m{40*'-'}\033[0m")
+    else:
+        print("\tVERDICT: FAILED")
+        print(f"\033[94m{40*'-'}\033[0m")
+        print(f"\033[91m{20*'-'}\033[0m\n", end="")
+        for number, case, error in failed_cases:
+            print(f"\033[91mTest case {number} {case} failed with diff:\033[0m")
+            print(error)
+        print(f"\033[91m{20*'-'}\033[0m")
 
 
 def main():
