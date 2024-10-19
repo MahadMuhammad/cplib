@@ -22,16 +22,15 @@ def generate_header(author, file_name, is_python=False):
     if is_python:
         header = f"""\
 \"\"\"
-Author  : {author} | github.com/MahadMuhammad
-Created : {timestamp}   {relative_path}
+author  : {author} | github.com/MahadMuhammad
+created : {timestamp}  {relative_path}
 \"\"\"
 """
     else:
         header = f"""\
 /**
- *  Author  : {author} | github.com/MahadMuhammad
- *  Created : {timestamp}   
- *  {relative_path}
+ *  author  : {author} | github.com/MahadMuhammad
+ *  created : {timestamp}  {relative_path}
  **/"""
     return header
 
@@ -59,7 +58,7 @@ def main():
         help="Path to the output file",
     )
     parser.add_argument(
-        "--author", default="Mahad", help="Author name to include in the header"
+        "--author", default="mahad", help="Author name to include in the header"
     )
     parser.add_argument(
         "-p",
