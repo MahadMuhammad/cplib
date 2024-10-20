@@ -3,4 +3,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    for _ in range(int(input())):
+        main()
