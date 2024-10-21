@@ -140,8 +140,11 @@ def save_samples(data, prob_dir):
 def make_prob(data, name=None):
     if name is None:
         name = get_prob_name(data)
-
+    #  replace spacing with underscores
+    name = name.replace(" ", "_")
     prob_dir = Path(".") / name
+    #  replace spacing with underscores
+    prob_dir = prob_dir.resolve().with_name(prob_dir.name.replace(" ", "_"))
 
     if name == ".":
         print("Using current directory...")
