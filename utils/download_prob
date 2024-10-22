@@ -143,8 +143,6 @@ def make_prob(data, name=None):
     #  replace spacing with underscores
     name = name.replace(" ", "_")
     prob_dir = Path(".") / name
-    #  replace spacing with underscores
-    prob_dir = prob_dir.resolve().with_name(prob_dir.name.replace(" ", "_"))
 
     if name == ".":
         print("Using current directory...")
