@@ -115,7 +115,7 @@ def save_samples(data, prob_dir):
 
     # stores information in README.md
     with open(prob_dir / "README.md", "w") as f:
-        f.write(f"# [{data['name']}]({data['url']})\n\n")
+        f.write(f"# {data['name']}\n\n")
         f.write(f"**Group:** {data['group']}\n\n")
         f.write(f"**URL:** {data['url']}\n\n")
         f.write(f"**Interactive:** {'Yes' if data['interactive'] else 'No'}\n\n")
