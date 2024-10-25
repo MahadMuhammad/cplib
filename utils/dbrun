@@ -9,19 +9,22 @@ PROBLEM_NAME = os.path.basename(os.getcwd())
 DEBUG = True
 LANG = "cpp"
 
-# Set targets and commands based on language
-if LANG == "cpp":
-    TARGET = PROBLEM_NAME
-    EXECUTE = f"./{TARGET}.out"
-    CLEAN_TARGETS = [TARGET]
-elif LANG == "python":
-    TARGET = f"{PROBLEM_NAME}.py"
-    EXECUTE = f"python3 ./{TARGET}"
-    CLEAN_TARGETS = []
-else:
-    raise ValueError(
-        "Unknown language; please set TARGET, EXECUTE, and CLEAN_TARGETS manually"
-    )
+
+def set_targets(name=None):
+    global TARGET, EXECUTE, CLEAN_TARGETS
+    if LANG == "cpp":
+        TARGET = name if name else PROBLEM_NAME
+        EXECUTE = f"./{TARGET}.out"
+        CLEAN_TARGETS = [TARGET]
+    elif LANG == "python":
+        TARGET = f"{name}.py" if name else f"{PROBLEM_NAME}.py"
+        EXECUTE = f"python3 ./{TARGET}"
+        CLEAN_TARGETS = []
+    else:
+        raise ValueError(
+            "Unknown language; please set TARGET, EXECUTE, and CLEAN_TARGETS manually"
+        )
+
 
 CXX = "g++"
 CXXFLAGS = "-std=c++23 -Winvalid-pch -I/home/mahad/cplib/ -Wall -Wextra -pedantic -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -Wunused -Wsign-conversion"
@@ -32,7 +35,7 @@ if DEBUG:
 
 
 def compile_cpp():
-    source_file = f"{PROBLEM_NAME}.cpp"
+    source_file = f"{TARGET}.cpp"
     target_file = f"{TARGET}.out"
 
     # Skip compilation if the target is up-to-date
@@ -69,7 +72,8 @@ def veryclean():
         os.remove(res_file)
 
 
-def run():
+def run(name=None):
+    set_targets(name)
     if LANG == "cpp":
         compile_cpp()
     subprocess.run(f"time -p {EXECUTE}", shell=True)
@@ -77,7 +81,8 @@ def run():
         print("Built with DEBUG flags enabled, code may be slower than normal")
 
 
-def run_tests():
+def run_tests(name=None):
+    set_targets(name)
     cases = sorted(glob.glob("*.in"))
     for case in cases:
         base = os.path.splitext(case)[0]
@@ -88,13 +93,12 @@ def run_tests():
             print("Built with DEBUG flags enabled, code may be slower than normal")
 
 
-def test():
-    # from the current directory, get all the input and output files
+def test(name=None):
+    set_targets(name)
     cases = sorted(glob.glob("*.in"))
     outs = sorted(glob.glob("*.output"))
     tests = [os.path.splitext(case)[0] for case in cases]
 
-    # compile the cpp file
     compile_cpp()
     clean_results()
     passed = 0
@@ -166,18 +170,24 @@ def main():
         choices=["clean", "veryclean", "run", "test"],
         help="Command to execute",
     )
+    parser.add_argument(
+        "name",
+        nargs="?",
+        help="Optional name for the target",
+    )
     args = parser.parse_args()
 
     command = args.command
-    print(f"Running command: {command}")
+    name = args.name
+    print(f"Running command: {command} with name: {name}")
     if command == "clean":
         clean()
     elif command == "veryclean":
         veryclean()
     elif command == "run":
-        run()
+        run(name)
     elif command == "test":
-        test()
+        test(name)
 
 
 if __name__ == "__main__":
