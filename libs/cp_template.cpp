@@ -10,7 +10,9 @@ using namespace std;
 
 int main() {
   ios::sync_with_stdio(false);
+#ifndef MAHAD_DEBUG
   cin.tie(nullptr);
+#endif
 
   unsigned int TC;
   cin >> TC;
