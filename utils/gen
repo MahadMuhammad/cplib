@@ -3,6 +3,7 @@
 
 import argparse, os
 from datetime import datetime
+import pathlib
 
 
 def read_template(file_path):
@@ -36,7 +37,6 @@ created : {timestamp}  {relative_path}
 
 
 def write_output(header, template_content, output_path):
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as file:
         file.write(header + "\n" + template_content)
 
@@ -72,6 +72,13 @@ def main():
 
     # replace spaces with underscores in output file name
     args.output_file = args.output_file.replace(" ", "_")
+
+    # create directories/sub-directories, if they don't exist
+    # NOTE: only works for unix-like systems where / is the separator for directories
+    prob_dir = pathlib.Path(".")
+    for part in args.output_file.split("/")[:-1]:
+        prob_dir = prob_dir / part
+        prob_dir.mkdir(exist_ok=True)
 
     if args.python:
         if not args.output_file.endswith(".py"):
